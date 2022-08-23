@@ -1,3 +1,3 @@
-import {Telegraf} from "telegraf";
+import { Telegraf } from 'telegraf';
 
-export default  new Telegraf(process.env.TOKEN);
+export default new Telegraf(process.env.TOKEN);

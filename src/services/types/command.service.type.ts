@@ -1,5 +1,3 @@
-interface ICommandService{
-}
-
+interface ICommandService {}
 
 export default ICommandService;
