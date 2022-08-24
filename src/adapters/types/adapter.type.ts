@@ -5,4 +5,5 @@ interface IApiAdapter {
   getPrice(currency: string);
 }
 
+export type ApiAdaptersGenerator = () => IApiAdapter[];
 export default IApiAdapter;
