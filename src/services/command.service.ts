@@ -1,8 +1,6 @@
 import ICommandService from './types/command.service.type';
 import { Context } from 'telegraf';
-import IApiAdapter, {
-  ApiAdaptersGenerator,
-} from '../adapters/types/adapter.type';
+import IApiAdapter from '../adapters/types/adapter.type';
 
 class CommandService implements ICommandService {
   container: IApiAdapter[];
@@ -12,12 +10,17 @@ class CommandService implements ICommandService {
   }
 
   getPrice(ctx: Context) {
+    console.log(ctx['user']);
     ctx.reply('admin');
   }
 
-  exchanges(ctx: Context) {}
+  exchanges(ctx: Context) {
+    ctx.reply('Hello');
+  }
 
-  myExchanges(ctx: Context) {}
+  myExchanges(ctx: Context) {
+    ctx.reply('az');
+  }
 }
 
 export default CommandService;
