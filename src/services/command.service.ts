@@ -8,10 +8,18 @@ class CommandService implements ICommandService {
   constructor(apiAdapters: IApiAdapter[]) {
     this.container = apiAdapters;
   }
+  start(ctx: Context) {
+    ctx.reply('Welcome!');
+  }
 
   getPrice(ctx: Context) {
-    console.log(ctx['user']);
-    ctx.reply('admin');
+    ctx.reply('admin', {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: 'Binance', callback_data: 'exchange-set-binance' }],
+        ],
+      },
+    });
   }
 
   exchanges(ctx: Context) {
@@ -20,6 +28,9 @@ class CommandService implements ICommandService {
 
   myExchanges(ctx: Context) {
     ctx.reply('az');
+  }
+  setExchange(ctx: Context) {
+    ctx.reply('Exchange setted!');
   }
 }
 

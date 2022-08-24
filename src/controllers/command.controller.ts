@@ -4,17 +4,22 @@ import ICommandService from '../services/types/command.service.type';
 
 class CommandController implements ICommandController {
   constructor(private readonly commandService: ICommandService) {}
-
-  Exchanges(ctx: Context) {
+  Start(ctx: Context) {
+    return this.commandService.start(ctx);
+  }
+  ExchangesCommand(ctx: Context) {
     return this.commandService.exchanges(ctx);
   }
 
-  MyExchanges(ctx: Context) {
+  MyExchangesCommand(ctx: Context) {
     return this.commandService.myExchanges(ctx);
   }
 
-  Price(ctx: Context) {
+  PriceCommand(ctx: Context) {
     return this.commandService.getPrice(ctx);
+  }
+  SetExchangeAction(ctx: Context) {
+    return this.commandService.setExchange(ctx);
   }
 }
 

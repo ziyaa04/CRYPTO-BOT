@@ -18,31 +18,23 @@ let cache: IUser[] = [];
 const commandService = new CommandService(apiAdaptersGenerator());
 const commandController = new CommandController(commandService);
 
-// middlewares
-bot.use(async (ctx: Context, next) => {
-  let user = cache.find(
-    (user: IUser) => user.telegram_id === ctx.message.from.id,
-  );
-  if (!user) {
-    const ctxFrom = ctx.message.from;
-    user = await UserSchema.create({
-      telegram_id: ctxFrom.id,
-      telegram_name: ctxFrom.username,
-      telegram_lang: ctxFrom.language_code,
-      exchanges: [],
-    });
-    cache.push(user);
-  }
-  ctx['user'] = user;
-  next();
-});
+// bot start
+bot.start((ctx: Context) => commandController.Start(ctx));
 
 // commands
-bot.command('price', (ctx: Context) => commandController.Price(ctx));
-bot.command('exchanges', (ctx: Context) => commandController.Exchanges(ctx));
-bot.command('my_exchanges', (ctx: Context) =>
-  commandController.MyExchanges(ctx),
+bot.command('price', (ctx: Context) => commandController.PriceCommand(ctx));
+bot.command('exchanges', (ctx: Context) =>
+  commandController.ExchangesCommand(ctx),
 );
+bot.command('my_exchanges', (ctx: Context) =>
+  commandController.MyExchangesCommand(ctx),
+);
+
+// actions
+bot.action(/exchange-set-[a-z]+/, (ctx: Context) =>
+  commandController.SetExchangeAction(ctx),
+);
+
 // start application
 const start = async () => {
   await mongoose.connect(process.env.DB_STRING, async () => {
@@ -52,3 +44,7 @@ const start = async () => {
   });
 };
 start();
+
+// Enable graceful stop
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));

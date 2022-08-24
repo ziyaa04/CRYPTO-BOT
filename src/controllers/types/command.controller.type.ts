@@ -1,9 +1,11 @@
 import { Context } from 'telegraf';
 
 interface ICommandController {
-  Price(ctx: Context);
-  Exchanges(ctx: Context);
-  MyExchanges(ctx: Context);
+  Start(ctx: Context);
+  PriceCommand(ctx: Context);
+  ExchangesCommand(ctx: Context);
+  MyExchangesCommand(ctx: Context);
+  SetExchangeAction(ctx: Context);
 }
 
 export default ICommandController;
