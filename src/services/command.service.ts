@@ -34,60 +34,72 @@ class CommandService implements ICommandService {
     }
   }
 
-  async getPrice(ctx: Context) {
-    const user = await this.findUser(ctx.message.from.id);
+  async getPrice(ctx: Context & { message: { text: string } }) {
+    try {
+      const user = await this.findUser(ctx.message.from.id);
+      if (!user.exchanges.length)
+        return this.messageService.replyNotSelectedExchange(ctx);
+      const currency = ctx.message.text.split(' ')[1];
+      if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
+      for (const adapter of this.container) {
+        if (user.exchanges.includes(adapter.name)) {
+          const price = await adapter.getPrice(currency);
+          ctx.reply(
+            `${adapter.name}\n${currency.toUpperCase()} - ${price} USDT`,
+          );
+        }
+      }
+    } catch (e) {
+      this.messageService.replyError(ctx);
+    }
   }
 
   exchanges(ctx: Context) {
-    ctx.reply('Exchanges', {
-      reply_markup: {
-        inline_keyboard: this.messageService.getAllExchanges(),
-      },
-    });
+    this.messageService.replyAllExchanges(ctx);
   }
 
   async myExchanges(ctx: Context) {
     try {
       const user = await this.findUser(ctx.message.from.id);
-      ctx.reply('Selected Exchanges', {
-        reply_markup: {
-          inline_keyboard: this.messageService.getMyExchanges(
-            user.exchanges as ExchangesEnum[],
-          ),
-        },
-      });
+      this.messageService.replySelectedExchanges(
+        ctx,
+        user.exchanges as ExchangesEnum[],
+      );
     } catch (e) {
-      ctx.reply(this.messageService.error());
+      this.messageService.replyError(ctx);
     }
   }
 
   private async findUser(telegramId: number): Promise<IUser> {
     return UserSchema.findOne({ telegram_id: telegramId });
   }
+  private getExchangeFromCallBack(ctx: Context) {
+    return ctx.callbackQuery.data?.split('-')?.at(-1)?.toUpperCase();
+  }
   async setExchange(ctx: Context) {
     try {
-      const selectedExchange = ctx.callbackQuery.data
-        ?.split('-')
-        ?.at(-1)
-        ?.toUpperCase();
+      const selectedExchange = this.getExchangeFromCallBack(
+        ctx,
+      ) as ExchangesEnum;
       if (!selectedExchange) throw new Error();
-      const user: IUser = await UserSchema.findOne({
-        telegram_id: ctx.callbackQuery.from.id,
-      });
-      console.log(user);
+      const user: IUser = await this.findUser(ctx.callbackQuery.from.id);
+      // check is already selected the exchange
       if (
         user.exchanges.find((elem) => elem.toUpperCase() === selectedExchange)
       ) {
-        ctx.reply(`${selectedExchange} already selected!`);
-        return;
+        return this.messageService.replyAlreadySelectedExchange(
+          ctx,
+          selectedExchange,
+        );
       }
+      // add exchange to the user's exchanges
       await UserSchema.updateOne(
         { telegram_id: user.telegram_id },
         { $push: { exchanges: selectedExchange } },
       );
-      ctx.reply(`${selectedExchange} selected!`);
+      this.messageService.replySelectedExchange(ctx, selectedExchange);
     } catch (e) {
-      ctx.reply(this.messageService.error());
+      this.messageService.replyError(ctx);
     }
   }
 }

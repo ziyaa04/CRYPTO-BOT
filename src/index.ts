@@ -8,7 +8,6 @@ import CommandController from './controllers/command.controller';
 import CommandService from './services/command.service';
 import apiAdaptersGenerator from './adapters/all.adapter';
 import { Context } from 'telegraf';
-import UserSchema, { IUser } from './schemas/user.schema';
 import MessageService from './services/message.service';
 
 // create singletons
