@@ -41,7 +41,7 @@ class CommandService implements ICommandService {
       if (!user.exchanges.length)
         return this.messageService.replyNotSelectedExchange(ctx);
 
-      const currency = ctx.message.text.split(' ')[1];
+      const currency = this.getCurrencyFromCommand(ctx, 'price');
       // if not exists currency reply message
       if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
 
@@ -79,6 +79,12 @@ class CommandService implements ICommandService {
   }
   private async findUser(telegramId: number): Promise<IUser> {
     return UserSchema.findOne({ telegram_id: telegramId });
+  }
+  private getCurrencyFromCommand(
+    ctx: Context & { message: { text: string } },
+    command: string,
+  ) {
+    return ctx.message.text.replace(/ /g, '').replace(`/${command}`, '');
   }
   private getExchangeFromCallBack(ctx: Context) {
     return ctx.callbackQuery.data?.split('-')?.at(-1)?.toUpperCase();
