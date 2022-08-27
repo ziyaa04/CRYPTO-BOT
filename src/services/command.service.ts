@@ -4,8 +4,8 @@ import IApiAdapter from '../adapters/types/adapter.type';
 import UserSchema, { IUser } from '../schemas/user.schema';
 import MessageService from './message.service';
 import ExchangesEnum from '../enums/exchanges.enum';
-import ApiError from '../errors/adapter.error';
 import { AxiosError } from 'axios';
+import MessagesEnum from '../enums/messages.enum';
 
 class CommandService implements ICommandService {
   container: IApiAdapter[];
@@ -16,7 +16,6 @@ class CommandService implements ICommandService {
   ) {
     this.container = apiAdapters;
   }
-
   async start(ctx: Context) {
     try {
       const exists = await UserSchema.findOne({
@@ -35,7 +34,6 @@ class CommandService implements ICommandService {
       ctx.reply('Error!');
     }
   }
-
   async getPrice(ctx: Context & { message: { text: string } }) {
     try {
       const user = await this.findUser(ctx.message.from.id);
@@ -57,20 +55,17 @@ class CommandService implements ICommandService {
         }
       }
     } catch (e) {
-      console.log(e);
       if (e instanceof AxiosError)
         return this.messageService.replyCustomMessage(
           ctx,
-          'Something wenr wrong!',
+          MessagesEnum.apiError,
         );
       this.messageService.replyError(ctx);
     }
   }
-
   exchanges(ctx: Context) {
     this.messageService.replyAllExchanges(ctx);
   }
-
   async myExchanges(ctx: Context) {
     try {
       const user = await this.findUser(ctx.message.from.id);
@@ -82,7 +77,6 @@ class CommandService implements ICommandService {
       this.messageService.replyError(ctx);
     }
   }
-
   private async findUser(telegramId: number): Promise<IUser> {
     return UserSchema.findOne({ telegram_id: telegramId });
   }
@@ -111,6 +105,30 @@ class CommandService implements ICommandService {
         { $push: { exchanges: selectedExchange } },
       );
       this.messageService.replySelectedExchange(ctx, selectedExchange);
+    } catch (e) {
+      this.messageService.replyError(ctx);
+    }
+  }
+  async removeExchange(ctx: Context) {
+    try {
+      const selectedExchange = this.getExchangeFromCallBack(
+        ctx,
+      ) as ExchangesEnum;
+      if (!selectedExchange) throw new Error();
+      const user: IUser = await this.findUser(ctx.callbackQuery.from.id);
+      if (
+        !user.exchanges.find((elem) => elem.toUpperCase() === selectedExchange)
+      )
+        return this.messageService.replyCustomMessage(
+          ctx,
+          `You cannot delete ${selectedExchange} because you did not selected it.`,
+        );
+
+      await UserSchema.updateOne(
+        { telegram_id: user.telegram_id },
+        { $pull: { exchanges: selectedExchange.toUpperCase() } },
+      );
+      this.messageService.replyRemovedExchange(ctx, selectedExchange);
     } catch (e) {
       this.messageService.replyError(ctx);
     }

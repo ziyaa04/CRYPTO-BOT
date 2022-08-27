@@ -8,6 +8,7 @@ interface ICommandService {
   exchanges(ctx: Context);
   myExchanges(ctx: Context);
   setExchange(ctx: Context);
+  removeExchange(ctx: Context);
 }
 
 export default ICommandService;

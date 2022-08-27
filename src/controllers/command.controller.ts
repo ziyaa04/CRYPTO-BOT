@@ -18,8 +18,12 @@ class CommandController implements ICommandController {
   PriceCommand(ctx: Context) {
     return this.commandService.getPrice(ctx);
   }
+
   SetExchangeAction(ctx: Context) {
     return this.commandService.setExchange(ctx);
+  }
+  RemoveExchangeAction(ctx: Context) {
+    return this.commandService.removeExchange(ctx);
   }
 }
 

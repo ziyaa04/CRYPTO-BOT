@@ -25,7 +25,10 @@ export class MessageService {
   }
 
   replySelectedExchange(ctx: Context, exchange: ExchangesEnum) {
-    this.replyCustomMessage(ctx, `${exchange} successfully selected! `);
+    this.replyCustomMessage(ctx, `${exchange} successfully selected!`);
+  }
+  replyRemovedExchange(ctx: Context, exchange: ExchangesEnum) {
+    this.replyCustomMessage(ctx, `${exchange} successfully removed!`);
   }
 
   replyAlreadySelectedExchange(ctx: Context, exchange: ExchangesEnum) {

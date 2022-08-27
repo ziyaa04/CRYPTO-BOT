@@ -36,6 +36,9 @@ bot.command('my_exchanges', (ctx: Context) =>
 bot.action(/exchange-set-[a-zA-Z_]+/, (ctx: Context) =>
   commandController.SetExchangeAction(ctx),
 );
+bot.action(/exchange-remove-[a-zA-Z_]+/, (ctx: Context) =>
+  commandController.RemoveExchangeAction(ctx),
+);
 
 // start application
 const start = async () => {
