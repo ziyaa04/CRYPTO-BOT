@@ -4,65 +4,70 @@ import MessagesEnum from '../enums/messages.enum';
 
 export class MessageService {
   replyAllExchanges(ctx: Context) {
-    ctx.reply('Exchanges', {
+    this.replyCustomMessage(ctx, MessagesEnum.AllExchanges, {
       reply_markup: {
         inline_keyboard: this.getAllExchanges(),
       },
+      parse_mode: 'MarkdownV2',
     });
   }
   replySelectedExchanges(ctx: Context, exchanges: ExchangesEnum[]) {
-    ctx.reply('Selected Exchanges', {
+    ctx.reply(MessagesEnum.MyExchanges, {
       reply_markup: {
         inline_keyboard: this.getMyExchanges(exchanges),
       },
+      parse_mode: 'MarkdownV2',
     });
   }
+
   replyError(ctx: Context) {
-    ctx.reply(MessagesEnum.error);
-  }
-  replySelectedExchange(ctx: Context, exchange: ExchangesEnum) {
-    ctx.reply(`${exchange} successfully selected! `);
-  }
-  replyAlreadySelectedExchange(ctx: Context, exchange: ExchangesEnum) {
-    ctx.reply(`${exchange} is already selected!`);
-  }
-  replyNotSelectedExchange(ctx: Context) {
-    ctx.reply('No exchange is selected, please select at least one exchange!');
-  }
-  replyNotSelectedCurrency(ctx: Context) {
-    ctx.reply('Please select a currency!');
+    this.replyCustomMessage(ctx, MessagesEnum.error);
   }
 
-  private getAllExchanges() {
-    const keys = Object.keys(ExchangesEnum);
+  replySelectedExchange(ctx: Context, exchange: ExchangesEnum) {
+    this.replyCustomMessage(ctx, `${exchange} successfully selected! `);
+  }
+
+  replyAlreadySelectedExchange(ctx: Context, exchange: ExchangesEnum) {
+    this.replyCustomMessage(ctx, `${exchange} is already selected!`);
+  }
+
+  replyNotSelectedExchange(ctx: Context) {
+    this.replyCustomMessage(ctx, MessagesEnum.NoExchangeSelected);
+  }
+
+  replyNotSelectedCurrency(ctx: Context) {
+    this.replyCustomMessage(ctx, MessagesEnum.PleaseSelectCur);
+  }
+
+  replyCustomMessage(ctx: Context, message: string, options: any = {}) {
+    ctx.reply(message, { ...options });
+  }
+
+  private makeButtons(enumOrArray: object, callBackData: string) {
+    const keys = Object.keys(enumOrArray);
     const buttons = [];
-    let currentButtonPlace: any[];
+    let currentButtonRow: any[];
     for (let i = 0; i < keys.length; i++) {
       if (i % 3 === 0) {
         buttons.push([]);
-        currentButtonPlace = buttons[buttons.length - 1];
+        currentButtonRow = buttons[buttons.length - 1];
       }
-      const exchangeName = ExchangesEnum[keys[i]];
+      const exchangeName = enumOrArray[keys[i]];
       const button = Markup.button.callback(
         exchangeName,
-        `exchange-set-${exchangeName}`,
+        callBackData + exchangeName,
       );
-      currentButtonPlace.push(button);
+      currentButtonRow.push(button);
     }
     return buttons;
   }
+
+  private getAllExchanges() {
+    return this.makeButtons(ExchangesEnum, MessagesEnum.ExchangeSetSchema);
+  }
   private getMyExchanges(exchanges: ExchangesEnum[]) {
-    const buttons = [];
-    let currentButtonPlace: any[];
-    for (let i = 0; i < exchanges.length; i++) {
-      if (i % 3 === 0) {
-        buttons.push([]);
-        currentButtonPlace = buttons[buttons.length - 1];
-      }
-      const button = Markup.button.callback(exchanges[i], exchanges[i]);
-      currentButtonPlace.push(button);
-    }
-    return buttons;
+    return this.makeButtons(exchanges, MessagesEnum.ExchangeRemoveSchema);
   }
 }
 export default MessageService;

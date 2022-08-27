@@ -4,6 +4,8 @@ import IApiAdapter from '../adapters/types/adapter.type';
 import UserSchema, { IUser } from '../schemas/user.schema';
 import MessageService from './message.service';
 import ExchangesEnum from '../enums/exchanges.enum';
+import ApiError from '../errors/adapter.error';
+import { AxiosError } from 'axios';
 
 class CommandService implements ICommandService {
   container: IApiAdapter[];
@@ -37,10 +39,15 @@ class CommandService implements ICommandService {
   async getPrice(ctx: Context & { message: { text: string } }) {
     try {
       const user = await this.findUser(ctx.message.from.id);
+      // if not selected exchanges reply message
       if (!user.exchanges.length)
         return this.messageService.replyNotSelectedExchange(ctx);
+
       const currency = ctx.message.text.split(' ')[1];
+      // if not exists currency reply message
       if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
+
+      // reply selected adapters price
       for (const adapter of this.container) {
         if (user.exchanges.includes(adapter.name)) {
           const price = await adapter.getPrice(currency);
@@ -50,6 +57,12 @@ class CommandService implements ICommandService {
         }
       }
     } catch (e) {
+      console.log(e);
+      if (e instanceof AxiosError)
+        return this.messageService.replyCustomMessage(
+          ctx,
+          'Something wenr wrong!',
+        );
       this.messageService.replyError(ctx);
     }
   }

@@ -13,7 +13,6 @@ export class BinanceApiAdapter implements IApiAdapter {
     const response = await this.$api.get<IBinancePriceResponse>(
       `api/v3/ticker/price?symbol=${currency.toUpperCase()}USDT`,
     );
-    if (!response.data.price) throw new Error();
     return parseFloat(response.data.price).toFixed(2);
   }
 }
