@@ -4,7 +4,6 @@ import IApiAdapter from '../adapters/types/adapter.type';
 import UserSchema, { IUser } from '../schemas/user.schema';
 import MessageService from './message.service';
 import ExchangesEnum from '../enums/exchanges.enum';
-import { AxiosError } from 'axios';
 import MessagesEnum from '../enums/messages.enum';
 
 class CommandService implements ICommandService {
@@ -18,10 +17,12 @@ class CommandService implements ICommandService {
   }
   async start(ctx: Context) {
     try {
+      // check is user exists
       const exists = await UserSchema.findOne({
         telegram_id: ctx.message.from.id,
       });
       if (!exists) {
+        // if not exists, add to the db
         await UserSchema.create({
           telegram_id: ctx.message.from.id,
           telegram_lang: ctx.message.from.language_code,
@@ -42,50 +43,35 @@ class CommandService implements ICommandService {
         return this.messageService.replyNotSelectedExchange(ctx);
 
       const currency = this.getArgumentFromCommand(ctx);
-      console.log(currency);
+
       // if not exists currency reply message
       if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
-
       // reply selected adapters price
       for (const adapter of this.container) {
-        if (user.exchanges.includes(adapter.name)) {
-          const price = await adapter.getPrice(currency);
-          ctx.reply(
-            `${adapter.name}\n${currency.toUpperCase()} - ${price} USDT`,
-          );
+        if (
+          user.exchanges.find(
+            (name) => name.toUpperCase() === adapter.name.toUpperCase(),
+          )
+        ) {
+          try {
+            const price = await adapter.getPrice(currency);
+            this.messageService.replyCustomMessage(
+              ctx,
+              `${adapter.name}\n${currency.toUpperCase()} - ${price} USDT`,
+            );
+          } catch (e) {
+            //  an axios error
+            this.messageService.replyCustomMessage(ctx, MessagesEnum.apiError);
+          }
         }
       }
     } catch (e) {
-      if (e instanceof AxiosError)
-        return this.messageService.replyCustomMessage(
-          ctx,
-          MessagesEnum.apiError,
-        );
-      this.messageService.replyError(ctx);
+      // db error or another unexpected one
+      return this.messageService.replyError(ctx);
     }
   }
   exchanges(ctx: Context) {
     this.messageService.replyAllExchanges(ctx);
-  }
-  async myExchanges(ctx: Context) {
-    try {
-      const user = await this.findUser(ctx.message.from.id);
-      this.messageService.replySelectedExchanges(
-        ctx,
-        user.exchanges as ExchangesEnum[],
-      );
-    } catch (e) {
-      this.messageService.replyError(ctx);
-    }
-  }
-  private async findUser(telegramId: number): Promise<IUser> {
-    return UserSchema.findOne({ telegram_id: telegramId });
-  }
-  private getArgumentFromCommand(ctx: Context & { message: { text: string } }) {
-    return ctx.message.text.replace(/\s\s+/g, ' ').split(' ')[1];
-  }
-  private getExchangeFromCallBack(ctx: Context) {
-    return ctx.callbackQuery.data?.split('-')?.at(-1)?.toUpperCase();
   }
   async setExchange(ctx: Context) {
     try {
@@ -136,6 +122,26 @@ class CommandService implements ICommandService {
     } catch (e) {
       this.messageService.replyError(ctx);
     }
+  }
+  async myExchanges(ctx: Context) {
+    try {
+      const user = await this.findUser(ctx.message.from.id);
+      this.messageService.replySelectedExchanges(
+        ctx,
+        user.exchanges as ExchangesEnum[],
+      );
+    } catch (e) {
+      this.messageService.replyError(ctx);
+    }
+  }
+  private async findUser(telegramId: number): Promise<IUser> {
+    return UserSchema.findOne({ telegram_id: telegramId });
+  }
+  private getArgumentFromCommand(ctx: Context & { message: { text: string } }) {
+    return ctx.message.text.replace(/\s\s+/g, ' ').split(' ')[1];
+  }
+  private getExchangeFromCallBack(ctx: Context) {
+    return ctx.callbackQuery.data?.split('-')?.at(-1)?.toUpperCase();
   }
 }
 

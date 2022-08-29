@@ -1,9 +1,6 @@
 import IApiAdapter from './types/adapter.type';
 import { Axios } from 'axios';
-import {
-  IBinancePriceErrorResponse,
-  IBinancePriceResponse,
-} from './configs/binance.config';
+import { IBinancePriceResponse } from './configs/binance.config';
 import ExchangesEnum from '../enums/exchanges.enum';
 
 export class BinanceApiAdapter implements IApiAdapter {
