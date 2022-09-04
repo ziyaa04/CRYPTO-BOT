@@ -7,9 +7,12 @@ export class BinanceApiAdapter implements IApiAdapter {
   name = ExchangesEnum.BINANCE;
   constructor(public readonly $api: Axios) {}
   async getPrice(currency: string) {
-    const response = await this.$api.get<IBinancePriceResponse>(
-      `api/v3/ticker/price?symbol=${currency.toUpperCase()}USDT`,
-    );
-    return parseFloat(response.data.price).toFixed(2);
+    const {
+      data: { price },
+    } = await this.$api.get<IBinancePriceResponse>(`api/v3/ticker/price`, {
+      params: { symbol: currency.toUpperCase() + 'USDT' },
+    });
+
+    return parseFloat(price).toFixed(2);
   }
 }

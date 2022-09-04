@@ -41,9 +41,7 @@ class CommandService implements ICommandService {
       // if not selected exchanges reply message
       if (!user.exchanges.length)
         return this.messageService.replyNotSelectedExchange(ctx);
-
       const currency = this.getArgumentFromCommand(ctx);
-
       // if not exists currency reply message
       if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
       // reply selected adapters price
@@ -61,7 +59,10 @@ class CommandService implements ICommandService {
             );
           } catch (e) {
             //  an axios error
-            this.messageService.replyCustomMessage(ctx, MessagesEnum.apiError);
+            this.messageService.replyCustomMessage(
+              ctx,
+              `${adapter.name}\n${MessagesEnum.apiError}`,
+            );
           }
         }
       }

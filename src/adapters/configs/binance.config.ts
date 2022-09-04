@@ -9,9 +9,4 @@ export interface IBinancePriceResponse {
   price: string;
 }
 
-export interface IBinancePriceErrorResponse {
-  code: string;
-  msg: string;
-}
-
 export default binanceAxiosConfig;
