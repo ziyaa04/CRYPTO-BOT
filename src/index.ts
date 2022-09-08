@@ -9,19 +9,21 @@ import CommandService from './services/command.service';
 import apiAdaptersGenerator from './adapters/all.adapter';
 import { Context } from 'telegraf';
 import MessageService from './services/message.service';
+import { Logger } from 'tslog';
 
 // create singletons
 // apiAdaptersGenerator creates array of adapters
+const logger = new Logger();
 const messageService = new MessageService();
 const commandService = new CommandService(
   messageService,
+  logger,
   apiAdaptersGenerator(),
 );
 const commandController = new CommandController(commandService);
 
 // bot start
 bot.start((ctx: Context) => commandController.Start(ctx));
-
 // commands
 bot.command('price', (ctx: Context) => commandController.PriceCommand(ctx));
 bot.command('exchanges', (ctx: Context) =>

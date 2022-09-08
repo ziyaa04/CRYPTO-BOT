@@ -5,18 +5,21 @@ import UserSchema, { IUser } from '../schemas/user.schema';
 import MessageService from './message.service';
 import ExchangesEnum from '../enums/exchanges.enum';
 import MessagesEnum from '../enums/messages.enum';
+import { Logger } from 'tslog';
 
 class CommandService implements ICommandService {
   container: IApiAdapter[];
 
   constructor(
     private readonly messageService: MessageService,
+    private readonly logger: Logger,
     apiAdapters: IApiAdapter[],
   ) {
     this.container = apiAdapters;
   }
   async start(ctx: Context) {
     try {
+      this.logger.info(ctx.from.username);
       // check is user exists
       const exists = await UserSchema.findOne({
         telegram_id: ctx.message.from.id,
@@ -32,11 +35,14 @@ class CommandService implements ICommandService {
       }
       ctx.reply('Welcome!');
     } catch (e) {
+      this.logger.error(e);
       ctx.reply('Error!');
     }
   }
   async getPrice(ctx: Context & { message: { text: string } }) {
     try {
+      this.logger.info(ctx.from.username);
+
       const user = await this.findUser(ctx.message.from.id);
       // if not selected exchanges reply message
       if (!user.exchanges.length)
@@ -67,15 +73,18 @@ class CommandService implements ICommandService {
         }
       }
     } catch (e) {
+      this.logger.error(e);
       // db error or another unexpected one
       return this.messageService.replyError(ctx);
     }
   }
   exchanges(ctx: Context) {
+    this.logger.info(ctx.from.username);
     this.messageService.replyAllExchanges(ctx);
   }
   async setExchange(ctx: Context) {
     try {
+      this.logger.info(ctx.from.username);
       const selectedExchange = this.getExchangeFromCallBack(
         ctx,
       ) as ExchangesEnum;
@@ -97,11 +106,13 @@ class CommandService implements ICommandService {
       );
       this.messageService.replySelectedExchange(ctx, selectedExchange);
     } catch (e) {
+      this.logger.error(e);
       this.messageService.replyError(ctx);
     }
   }
   async removeExchange(ctx: Context) {
     try {
+      this.logger.info(ctx.from.username);
       const selectedExchange = this.getExchangeFromCallBack(
         ctx,
       ) as ExchangesEnum;
@@ -121,20 +132,24 @@ class CommandService implements ICommandService {
       );
       this.messageService.replyRemovedExchange(ctx, selectedExchange);
     } catch (e) {
+      this.logger.error(e);
       this.messageService.replyError(ctx);
     }
   }
   async myExchanges(ctx: Context) {
     try {
+      this.logger.info(ctx.from.username);
       const user = await this.findUser(ctx.message.from.id);
       this.messageService.replySelectedExchanges(
         ctx,
         user.exchanges as ExchangesEnum[],
       );
     } catch (e) {
+      this.logger.info(e);
       this.messageService.replyError(ctx);
     }
   }
+
   private async findUser(telegramId: number): Promise<IUser> {
     return UserSchema.findOne({ telegram_id: telegramId });
   }
