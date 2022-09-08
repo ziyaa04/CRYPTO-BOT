@@ -31,6 +31,8 @@ class CommandService implements ICommandService {
           telegram_lang: ctx.message.from.language_code,
           is_bot: ctx.message.from.is_bot,
           telegram_name: ctx.message.from.username,
+          user_name: ctx.message.from.first_name,
+          user_lastname: ctx.message.from.last_name,
         });
       }
       ctx.reply('Welcome!');
