@@ -10,6 +10,7 @@ import apiAdaptersGenerator from './adapters/all.adapter';
 import { Context } from 'telegraf';
 import MessageService from './services/message.service';
 import { Logger } from 'tslog';
+import { Users } from './db/tables.db';
 
 // create singletons
 // apiAdaptersGenerator creates array of adapters
@@ -21,6 +22,22 @@ const commandService = new CommandService(
   apiAdaptersGenerator(),
 );
 const commandController = new CommandController(commandService);
+
+bot.use((ctx: Context, next) => {
+  if (!Users.findOne({ telegram_id: ctx.from.id })) {
+    Users.add({
+      telegram_id: ctx.from.id,
+      telegram_name: ctx.from.username ?? 'unknown',
+      user_name: ctx.from.first_name ?? 'unknown',
+      user_lastname: ctx.from.last_name ?? 'unknown',
+      telegram_lang: ctx.from.language_code,
+      is_bot: ctx.from.is_bot,
+      exchanges: [],
+    });
+    Users.save();
+  }
+  next();
+});
 
 // bot start
 bot.start((ctx: Context) => commandController.Start(ctx));

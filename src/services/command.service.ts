@@ -1,13 +1,15 @@
 import ICommandService from './types/command.service.type';
 import { Context } from 'telegraf';
 import IApiAdapter from '../adapters/types/adapter.type';
-import UserSchema, { IUser } from '../schemas/user.schema';
 import MessageService from './message.service';
 import ExchangesEnum from '../enums/exchanges.enum';
 import MessagesEnum from '../enums/messages.enum';
 import { Logger } from 'tslog';
+import { Users } from '../db/tables.db';
+import { IDbTableDataType } from '../db/types/table.db.types';
+import { IUser } from '../db/types/user.db.types';
 
-class CommandService implements ICommandService {
+class CommandService {
   container: IApiAdapter[];
 
   constructor(
@@ -21,19 +23,19 @@ class CommandService implements ICommandService {
     try {
       this.logger.info(ctx.from.username);
       // check is user exists
-      const exists = await UserSchema.findOne({
-        telegram_id: ctx.message.from.id,
-      });
+      const exists = this.findUser(ctx.message.from.id);
       if (!exists) {
         // if not exists, add to the db
-        await UserSchema.create({
+        Users.add({
           telegram_id: ctx.message.from.id,
           telegram_lang: ctx.message.from.language_code,
           is_bot: ctx.message.from.is_bot,
           telegram_name: ctx.message.from.username,
           user_name: ctx.message.from.first_name,
           user_lastname: ctx.message.from.last_name,
+          exchanges: [],
         });
+        Users.save();
       }
       ctx.reply('Welcome!');
     } catch (e) {
@@ -102,10 +104,8 @@ class CommandService implements ICommandService {
         );
       }
       // add exchange to the user's exchanges
-      await UserSchema.updateOne(
-        { telegram_id: user.telegram_id },
-        { $push: { exchanges: selectedExchange } },
-      );
+      user.exchanges.push(selectedExchange);
+      Users.save();
       this.messageService.replySelectedExchange(ctx, selectedExchange);
     } catch (e) {
       this.logger.error(e);
@@ -127,11 +127,10 @@ class CommandService implements ICommandService {
           ctx,
           `You cannot delete ${selectedExchange} because you did not selected it.`,
         );
-
-      await UserSchema.updateOne(
-        { telegram_id: user.telegram_id },
-        { $pull: { exchanges: selectedExchange.toUpperCase() } },
+      user.exchanges = user.exchanges.filter(
+        (elem) => elem !== selectedExchange,
       );
+      await Users.save();
       this.messageService.replyRemovedExchange(ctx, selectedExchange);
     } catch (e) {
       this.logger.error(e);
@@ -152,8 +151,8 @@ class CommandService implements ICommandService {
     }
   }
 
-  private async findUser(telegramId: number): Promise<IUser> {
-    return UserSchema.findOne({ telegram_id: telegramId });
+  private findUser(telegramId: number): IUser & IDbTableDataType {
+    return Users.findOne({ telegram_id: telegramId });
   }
   private getArgumentFromCommand(ctx: Context & { message: { text: string } }) {
     return ctx.message.text.replace(/\s\s+/g, ' ').split(' ')[1];
