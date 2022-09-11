@@ -11,7 +11,6 @@ import { IUser } from '../db/types/user.db.types';
 
 class CommandService implements ICommandService {
   container: IApiAdapter[];
-
   constructor(
     private readonly messageService: MessageService,
     private readonly logger: Logger,

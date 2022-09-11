@@ -13,6 +13,6 @@ export class BinanceApiAdapter implements IApiAdapter {
       params: { symbol: currency.toUpperCase() + 'USDT' },
     });
 
-    return parseFloat(price).toFixed(2);
+    return parseFloat(price);
   }
 }
