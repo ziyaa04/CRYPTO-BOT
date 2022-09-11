@@ -11,9 +11,15 @@ export class DbTable<TSchema extends object, TUpdateSchema extends object>
     this.dbFilePath = path.join(process.cwd(), dbFilePath);
     fs.readFile(this.dbFilePath, (err, data) => {
       if (err) {
-        fs.writeFile(this.dbFilePath, '[]', () => {});
+        // check whether some error while reading file
+        fs.writeFile(this.dbFilePath, this.toJson(this.data), () => null);
       } else {
-        this.data = this.toJS(data.toString());
+        try {
+          this.data = this.toJS(data.toString());
+        } catch (e) {
+          // catch parse error
+          fs.writeFile(this.dbFilePath, this.toJson(this.data), () => null);
+        }
       }
     });
   }
