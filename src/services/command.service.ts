@@ -9,7 +9,7 @@ import { Users } from '../db/tables.db';
 import { IDbTableDataType } from '../db/types/table.db.types';
 import { IUser } from '../db/types/user.db.types';
 
-class CommandService {
+class CommandService implements ICommandService {
   container: IApiAdapter[];
 
   constructor(
@@ -20,28 +20,8 @@ class CommandService {
     this.container = apiAdapters;
   }
   async start(ctx: Context) {
-    try {
-      this.logger.info(ctx.from.username);
-      // check is user exists
-      const exists = this.findUser(ctx.message.from.id);
-      if (!exists) {
-        // if not exists, add to the db
-        Users.add({
-          telegram_id: ctx.message.from.id,
-          telegram_lang: ctx.message.from.language_code,
-          is_bot: ctx.message.from.is_bot,
-          telegram_name: ctx.message.from.username,
-          user_name: ctx.message.from.first_name,
-          user_lastname: ctx.message.from.last_name,
-          exchanges: [],
-        });
-        Users.save();
-      }
-      ctx.reply('Welcome!');
-    } catch (e) {
-      this.logger.error(e);
-      ctx.reply('Error!');
-    }
+    this.logger.info(ctx.from.username);
+    ctx.reply('Welcome!');
   }
   async getPrice(ctx: Context & { message: { text: string } }) {
     try {
