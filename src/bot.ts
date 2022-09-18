@@ -3,6 +3,7 @@ import { Users } from './db/tables.db';
 import { commandController, actionController } from './singletons';
 const bot = new Telegraf(process.env.TOKEN);
 
+// add user to the db
 bot.use((ctx: Context, next) => {
   if (!Users.findOne({ telegram_id: ctx.from.id })) {
     Users.add({
@@ -23,6 +24,8 @@ bot.use((ctx: Context, next) => {
 bot.start((ctx: Context) => commandController.Start(ctx));
 
 // commands
+bot.command('max_price', (ctx: Context) => commandController.MaxPrice(ctx));
+bot.command('min_price', (ctx: Context) => commandController.MinPrice(ctx));
 bot.command('price', (ctx: Context) => commandController.Price(ctx));
 bot.command('exchanges', (ctx: Context) => commandController.Exchanges(ctx));
 bot.command('my_exchanges', (ctx: Context) =>

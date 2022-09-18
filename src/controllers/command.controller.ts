@@ -17,6 +17,16 @@ class CommandController {
       ctx as Context & { message: { text: string } },
     );
   }
+  MaxPrice(ctx: Context) {
+    return this.commandService.maxPrice(
+      ctx as Context & { message?: { text: string } },
+    );
+  }
+  MinPrice(ctx: Context) {
+    return this.commandService.minPrice(
+      ctx as Context & { message?: { text: string } },
+    );
+  }
 }
 
 export default CommandController;
