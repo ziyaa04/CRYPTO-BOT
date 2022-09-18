@@ -10,15 +10,12 @@ class CommandController implements ICommandController {
   ExchangesCommand(ctx: Context) {
     return this.commandService.exchanges(ctx);
   }
-
   MyExchangesCommand(ctx: Context) {
     return this.commandService.myExchanges(ctx);
   }
-
   PriceCommand(ctx: Context) {
     return this.commandService.getPrice(ctx);
   }
-
   SetExchangeAction(ctx: Context) {
     return this.commandService.setExchange(ctx);
   }
