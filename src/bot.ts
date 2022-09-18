@@ -1,6 +1,6 @@
 import { Context, Telegraf } from 'telegraf';
 import { Users } from './db/tables.db';
-import { commandController } from './singletons';
+import { commandController, actionController } from './singletons';
 const bot = new Telegraf(process.env.TOKEN);
 
 bot.use((ctx: Context, next) => {
@@ -33,10 +33,10 @@ bot.command('my_exchanges', (ctx: Context) =>
 
 // actions
 bot.action(/exchange-set-[a-zA-Z_]+/, (ctx: Context) =>
-  commandController.SetExchangeAction(ctx),
+  actionController.SetExchangeAction(ctx),
 );
 bot.action(/exchange-remove-[a-zA-Z_]+/, (ctx: Context) =>
-  commandController.RemoveExchangeAction(ctx),
+  actionController.RemoveExchangeAction(ctx),
 );
 
 export default bot;

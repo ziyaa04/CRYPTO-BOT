@@ -17,12 +17,6 @@ class CommandController {
       ctx as Context & { message: { text: string } },
     );
   }
-  SetExchangeAction(ctx: Context) {
-    return this.commandService.setExchange(ctx);
-  }
-  RemoveExchangeAction(ctx: Context) {
-    return this.commandService.removeExchange(ctx);
-  }
 }
 
 export default CommandController;
