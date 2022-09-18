@@ -21,10 +21,9 @@ class CommandService {
     this.logger.info(ctx.from.username);
     ctx.reply('Welcome!');
   }
-  async getPrice(ctx: Context & { message: { text: string } }) {
+  async getPrice(ctx: Context & { message?: { text: string } }) {
     try {
       this.logger.info(ctx.from.username);
-
       const user = await this.findUser(ctx.message.from.id);
       // if not selected exchanges reply message
       if (!user.exchanges.length)
@@ -33,27 +32,7 @@ class CommandService {
       // if not exists currency reply message
       if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
       // reply selected adapters price
-      for (const adapter of this.container) {
-        if (
-          user.exchanges.find(
-            (name) => name.toUpperCase() === adapter.name.toUpperCase(),
-          )
-        ) {
-          try {
-            const price = await adapter.getPrice(currency);
-            this.messageService.replyCustomMessage(
-              ctx,
-              `${adapter.name}\n${currency.toUpperCase()} - ${price} USDT`,
-            );
-          } catch (e) {
-            //  an axios error
-            this.messageService.replyCustomMessage(
-              ctx,
-              `${adapter.name}\n${MessagesEnum.apiError}`,
-            );
-          }
-        }
-      }
+      this.replySelectedAdaptersPrice(ctx, user, currency);
     } catch (e) {
       this.logger.error(e);
       // db error or another unexpected one
@@ -131,6 +110,33 @@ class CommandService {
 
   private findUser(telegramId: number): IUser & IDbTableDataType {
     return Users.findOne({ telegram_id: telegramId });
+  }
+  private async replySelectedAdaptersPrice(
+    ctx: Context,
+    user: IUser,
+    currency: string,
+  ) {
+    for (const adapter of this.container) {
+      if (
+        user.exchanges.find(
+          (name) => name.toUpperCase() === adapter.name.toUpperCase(),
+        )
+      ) {
+        try {
+          const price = await adapter.getPrice(currency);
+          this.messageService.replyCustomMessage(
+            ctx,
+            `${adapter.name}\n${currency.toUpperCase()} - ${price} USDT`,
+          );
+        } catch (e) {
+          //  an axios error
+          this.messageService.replyCustomMessage(
+            ctx,
+            `${adapter.name}\n${MessagesEnum.apiError}`,
+          );
+        }
+      }
+    }
   }
   private getArgumentFromCommand(ctx: Context & { message: { text: string } }) {
     return ctx.message.text.replace(/\s\s+/g, ' ').split(' ')[1];

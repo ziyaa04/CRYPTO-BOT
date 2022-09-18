@@ -13,7 +13,9 @@ class CommandController {
     return this.commandService.myExchanges(ctx);
   }
   PriceCommand(ctx: Context) {
-    return this.commandService.getPrice(ctx);
+    return this.commandService.getPrice(
+      ctx as Context & { message: { text: string } },
+    );
   }
   SetExchangeAction(ctx: Context) {
     return this.commandService.setExchange(ctx);
