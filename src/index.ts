@@ -7,10 +7,8 @@ import * as mongoose from 'mongoose';
 
 // start application
 const start = async () => {
-  await mongoose.connect(process.env.DB_STRING, async () => {
-    bot.launch();
-    console.log('APP STARTED!');
-  });
+  bot.launch();
+  console.log('APP STARTED!');
 };
 start();
 
