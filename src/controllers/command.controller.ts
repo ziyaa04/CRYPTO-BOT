@@ -6,13 +6,13 @@ class CommandController {
   Start(ctx: Context) {
     return this.commandService.start(ctx);
   }
-  ExchangesCommand(ctx: Context) {
+  Exchanges(ctx: Context) {
     return this.commandService.exchanges(ctx);
   }
-  MyExchangesCommand(ctx: Context) {
+  MyExchanges(ctx: Context) {
     return this.commandService.myExchanges(ctx);
   }
-  PriceCommand(ctx: Context) {
+  Price(ctx: Context) {
     return this.commandService.getPrice(
       ctx as Context & { message: { text: string } },
     );

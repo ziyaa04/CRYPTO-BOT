@@ -3,10 +3,10 @@ import { ActionService } from '../services/action.service';
 
 export class ActionController {
   constructor(private readonly actionService: ActionService) {}
-  SetExchangeAction(ctx: Context) {
+  SetExchange(ctx: Context) {
     return this.actionService.setExchange(ctx);
   }
-  RemoveExchangeAction(ctx: Context) {
+  RemoveExchange(ctx: Context) {
     return this.actionService.removeExchange(ctx);
   }
 }

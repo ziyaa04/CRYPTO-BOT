@@ -23,12 +23,11 @@ bot.use((ctx: Context, next) => {
 bot.start((ctx: Context) => commandController.Start(ctx));
 
 // commands
-bot.command('price', (ctx: Context) => commandController.PriceCommand(ctx));
-bot.command('exchanges', (ctx: Context) =>
-  commandController.ExchangesCommand(ctx),
-);
-bot.command('my_exchanges', (ctx: Context) =>
-  commandController.MyExchangesCommand(ctx),
+bot.command('maxPrice', (ctx: Context) => commandController.Price(ctx));
+bot.command('price', (ctx: Context) => commandController.Price(ctx));
+bot.command('exchanges', (ctx: Context) => commandController.Exchanges(ctx));
+bot.command('myExchanges', (ctx: Context) =>
+  commandController.MyExchanges(ctx),
 );
 
 // actions
