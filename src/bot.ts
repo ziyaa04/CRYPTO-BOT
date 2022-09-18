@@ -23,19 +23,18 @@ bot.use((ctx: Context, next) => {
 bot.start((ctx: Context) => commandController.Start(ctx));
 
 // commands
-bot.command('maxPrice', (ctx: Context) => commandController.Price(ctx));
 bot.command('price', (ctx: Context) => commandController.Price(ctx));
 bot.command('exchanges', (ctx: Context) => commandController.Exchanges(ctx));
-bot.command('myExchanges', (ctx: Context) =>
+bot.command('my_exchanges', (ctx: Context) =>
   commandController.MyExchanges(ctx),
 );
 
 // actions
 bot.action(/exchange-set-[a-zA-Z_]+/, (ctx: Context) =>
-  actionController.SetExchangeAction(ctx),
+  actionController.SetExchange(ctx),
 );
 bot.action(/exchange-remove-[a-zA-Z_]+/, (ctx: Context) =>
-  actionController.RemoveExchangeAction(ctx),
+  actionController.RemoveExchange(ctx),
 );
 
 export default bot;
