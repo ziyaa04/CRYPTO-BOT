@@ -1,4 +1,3 @@
-import ICommandService from './types/command.service.type';
 import { Context } from 'telegraf';
 import IApiAdapter from '../adapters/types/adapter.type';
 import MessageService from './message.service';
@@ -9,7 +8,7 @@ import { Users } from '../db/tables.db';
 import { IDbTableDataType } from '../db/types/table.db.types';
 import { IUser } from '../db/types/user.db.types';
 
-class CommandService implements ICommandService {
+class CommandService {
   container: IApiAdapter[];
   constructor(
     private readonly messageService: MessageService,

@@ -21,12 +21,12 @@ bot.use((ctx: Context, next) => {
 
 // bot start
 bot.start((ctx: Context) => commandController.Start(ctx));
+
 // commands
 bot.command('price', (ctx: Context) => commandController.PriceCommand(ctx));
 bot.command('exchanges', (ctx: Context) =>
   commandController.ExchangesCommand(ctx),
 );
-
 bot.command('my_exchanges', (ctx: Context) =>
   commandController.MyExchangesCommand(ctx),
 );
@@ -39,5 +39,4 @@ bot.action(/exchange-remove-[a-zA-Z_]+/, (ctx: Context) =>
   commandController.RemoveExchangeAction(ctx),
 );
 
-// Enable graceful stop
 export default bot;

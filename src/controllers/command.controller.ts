@@ -1,9 +1,8 @@
-import ICommandController from './types/command.controller.type';
 import { Context } from 'telegraf';
-import ICommandService from '../services/types/command.service.type';
+import CommandService from '../services/command.service';
 
-class CommandController implements ICommandController {
-  constructor(private readonly commandService: ICommandService) {}
+class CommandController {
+  constructor(private readonly commandService: CommandService) {}
   Start(ctx: Context) {
     return this.commandService.start(ctx);
   }
