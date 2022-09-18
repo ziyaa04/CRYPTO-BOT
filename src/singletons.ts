@@ -1,5 +1,3 @@
-// create singletons
-// apiAdaptersGenerator creates array of adapters
 import { Logger } from 'tslog';
 import MessageService from './services/message.service';
 import CommandService from './services/command.service';
@@ -9,6 +7,8 @@ import { HelperService } from './services/helper.service';
 import { ActionService } from './services/action.service';
 import { ActionController } from './controllers/action.controller';
 
+// create singletons
+// apiAdaptersGenerator creates array of adapters
 const apiAdapters = apiAdaptersGenerator();
 const logger = new Logger();
 const messageService = new MessageService();
