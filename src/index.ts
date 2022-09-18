@@ -3,7 +3,6 @@ config({
   path: process.env.NODE_ENV,
 });
 import bot from './bot';
-import * as mongoose from 'mongoose';
 
 // start application
 const start = async () => {
