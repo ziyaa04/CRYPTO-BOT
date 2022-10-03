@@ -78,7 +78,6 @@ export class DbTable<TSchema extends object, TUpdateSchema extends object>
     const keys = Object.keys(props);
     let isFound = false;
     for (const key of keys) {
-      //@ts-ignore
       if (elem[key] !== props[key]) {
         isFound = false;
         break;

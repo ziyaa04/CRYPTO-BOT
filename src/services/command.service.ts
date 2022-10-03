@@ -4,8 +4,6 @@ import MessageService from './message.service';
 import ExchangesEnum from '../enums/exchanges.enum';
 import MessagesEnum from '../enums/messages.enum';
 import { Logger } from 'tslog';
-import { Users } from '../db/tables.db';
-import { IDbTableDataType } from '../db/types/table.db.types';
 import { IUser } from '../db/types/user.db.types';
 import { HelperService } from './helper.service';
 import { ApiPriceResultDto } from './dto/api-price-result.dto';
@@ -21,17 +19,12 @@ class CommandService {
     this.logger.info(ctx.from.username);
     ctx.reply('Welcome!');
   }
-  async getPrice(ctx: Context & { message?: { text: string } }) {
+  async getPrice(ctx: Context) {
     try {
       this.logger.info(ctx.from.username);
-      const user = await this.helperService.findUser(ctx.message.from.id);
-      // if not selected exchanges reply message
-      if (!user.exchanges.length)
-        return this.messageService.replyNotSelectedExchange(ctx);
-      const currency = this.helperService.getArgumentFromCommand(ctx);
-      // if not exists currency reply message
-      if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
-      // reply selected adapters price
+      const validationResult = await this.validateUserAndCurrency(ctx);
+      if (!validationResult) return null;
+      const { user, currency } = validationResult;
       this.replySelectedAdaptersPrice(ctx, user, currency);
     } catch (e) {
       this.logger.error(e);
@@ -56,17 +49,22 @@ class CommandService {
       this.messageService.replyError(ctx);
     }
   }
-  async maxPrice(ctx: Context & { message?: { text: string } }) {
+  private async validateUserAndCurrency(ctx: Context) {
+    const user = await this.helperService.findUser(ctx.message.from.id);
+    // if not selected exchanges reply message
+    if (!user.exchanges.length)
+      return this.messageService.replyNotSelectedExchange(ctx);
+    const currency = this.helperService.getArgumentFromCommand(ctx);
+    // if not exists currency reply message
+    if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
+    return { user, currency };
+  }
+  async maxPrice(ctx: Context) {
     try {
       this.logger.info(ctx.from.username);
-      const user = await this.helperService.findUser(ctx.message.from.id);
-      // if not selected exchanges reply message
-      if (!user.exchanges.length)
-        return this.messageService.replyNotSelectedExchange(ctx);
-      const currency = this.helperService.getArgumentFromCommand(ctx);
-      // if not exists currency reply message
-      if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
-
+      const validationResult = await this.validateUserAndCurrency(ctx);
+      if (!validationResult) return null;
+      const { user, currency } = validationResult;
       // reply selected adapters price
       this.replySelectedAdaptersMaxPrice(ctx, user, currency);
     } catch (e) {
@@ -75,17 +73,12 @@ class CommandService {
       return this.messageService.replyError(ctx);
     }
   }
-  async minPrice(ctx: Context & { message?: { text: string } }) {
+  async minPrice(ctx: Context) {
     try {
       this.logger.info(ctx.from.username);
-      const user = await this.helperService.findUser(ctx.message.from.id);
-      // if not selected exchanges reply message
-      if (!user.exchanges.length)
-        return this.messageService.replyNotSelectedExchange(ctx);
-      const currency = this.helperService.getArgumentFromCommand(ctx);
-      // if not exists currency reply message
-      if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
-
+      const validationResult = await this.validateUserAndCurrency(ctx);
+      if (!validationResult) return null;
+      const { user, currency } = validationResult;
       // reply selected adapters price
       this.replySelectedAdaptersMinPrice(ctx, user, currency);
     } catch (e) {
@@ -101,14 +94,8 @@ class CommandService {
     currency: string,
   ) {
     const apiPriceResults = await this.getSelectedAdaptersPrice(user, currency);
-    let maxPriceResult: ApiPriceResultDto = apiPriceResults[0];
-    // find Max price adapter
-    for (let i = 1; i < apiPriceResults.length; i++) {
-      const curAdapter = apiPriceResults[i];
-      if (maxPriceResult.price < curAdapter.price) {
-        maxPriceResult = curAdapter;
-      }
-    }
+    const maxPriceResult = this.findMaxPriceAdapterPriceResult(apiPriceResults);
+
     // response max price adapter
     this.messageService.replyCustomMessage(
       ctx,
@@ -119,28 +106,22 @@ class CommandService {
       } USDT`,
     );
   }
+
   private async replySelectedAdaptersMinPrice(
     ctx: Context,
     user: IUser,
     currency: string,
   ) {
     const apiPriceResults = await this.getSelectedAdaptersPrice(user, currency);
-    let maxPriceResult: ApiPriceResultDto = apiPriceResults[0];
-    // find Max price adapter
-    for (let i = 1; i < apiPriceResults.length; i++) {
-      const curAdapter = apiPriceResults[i];
-      if (maxPriceResult.price > curAdapter.price) {
-        maxPriceResult = curAdapter;
-      }
-    }
+    const minPriceResult = this.findMinPriceAdapterPriceResult(apiPriceResults);
 
     // response max price adapter
     this.messageService.replyCustomMessage(
       ctx,
       `${
-        maxPriceResult.name
+        minPriceResult.name
       }(HAS MIN PRICE OF SELECTED)\n${currency.toUpperCase()} - ${
-        maxPriceResult.price
+        minPriceResult.price
       } USDT`,
     );
   }
@@ -149,24 +130,23 @@ class CommandService {
     ctx: Context,
     user: IUser,
     currency: string,
-  ) {
+  ): Promise<void> {
     const apiPriceResults = await this.getSelectedAdaptersPrice(user, currency);
     for (const apiPriceResult of apiPriceResults) {
       if (apiPriceResult.error) {
-        //error
-        this.messageService.replyCustomMessage(
+        this.messageService.replyExchangeMessage(
           ctx,
-          `${apiPriceResult.name}\n${MessagesEnum.apiError}`,
+          apiPriceResult.name,
+          MessagesEnum.apiError,
         );
-        continue;
+      } else {
+        // send result
+        this.messageService.replyExchangeMessage(
+          ctx,
+          apiPriceResult.name,
+          `${apiPriceResult.price} USDT`,
+        );
       }
-      // res
-      this.messageService.replyCustomMessage(
-        ctx,
-        `${apiPriceResult.name}\n${currency.toUpperCase()} - ${
-          apiPriceResult.price
-        } USDT`,
-      );
     }
   }
 
@@ -176,12 +156,13 @@ class CommandService {
   ): Promise<ApiPriceResultDto[]> {
     const apiPriceResults: ApiPriceResultDto[] = [];
     for (const adapter of this.container) {
+      // if not exists adapter, go to the next one
       if (!this.isExistsAdapter(user, adapter)) continue;
       try {
         const price = await adapter.getPrice(currency);
         apiPriceResults.push(new ApiPriceResultDto(adapter.name, price, false));
       } catch (e) {
-        //  an axios error
+        //  an axios error (means that the currency is wrong or not exists in this exchange)
         apiPriceResults.push(new ApiPriceResultDto(adapter.name, 0, true));
       }
     }
@@ -191,6 +172,32 @@ class CommandService {
     return user.exchanges.find(
       (name) => name.toUpperCase() === adapter.name.toUpperCase(),
     );
+  }
+
+  private findMaxPriceAdapterPriceResult(
+    apiPriceResults: ApiPriceResultDto[],
+  ): ApiPriceResultDto {
+    let maxPriceResult: ApiPriceResultDto = apiPriceResults[0];
+    for (let i = 1; i < apiPriceResults.length; i++) {
+      const curAdapter = apiPriceResults[i];
+      if (maxPriceResult.price < curAdapter.price) {
+        maxPriceResult = curAdapter;
+      }
+    }
+    return maxPriceResult;
+  }
+
+  private findMinPriceAdapterPriceResult(
+    apiPriceResults: ApiPriceResultDto[],
+  ): ApiPriceResultDto {
+    let maxPriceResult: ApiPriceResultDto = apiPriceResults[0];
+    for (let i = 1; i < apiPriceResults.length; i++) {
+      const curAdapter = apiPriceResults[i];
+      if (maxPriceResult.price > curAdapter.price) {
+        maxPriceResult = curAdapter;
+      }
+    }
+    return maxPriceResult;
   }
 }
 

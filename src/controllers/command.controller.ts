@@ -13,19 +13,13 @@ class CommandController {
     return this.commandService.myExchanges(ctx);
   }
   Price(ctx: Context) {
-    return this.commandService.getPrice(
-      ctx as Context & { message: { text: string } },
-    );
+    return this.commandService.getPrice(ctx);
   }
   MaxPrice(ctx: Context) {
-    return this.commandService.maxPrice(
-      ctx as Context & { message?: { text: string } },
-    );
+    return this.commandService.maxPrice(ctx);
   }
   MinPrice(ctx: Context) {
-    return this.commandService.minPrice(
-      ctx as Context & { message?: { text: string } },
-    );
+    return this.commandService.minPrice(ctx);
   }
 }
 

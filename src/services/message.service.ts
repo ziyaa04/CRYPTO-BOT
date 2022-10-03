@@ -43,7 +43,11 @@ export class MessageService {
     this.replyCustomMessage(ctx, MessagesEnum.PleaseSelectCur);
   }
 
-  replyCustomMessage(ctx: Context, message: string, options: any = {}) {
+  replyExchangeMessage(ctx: Context, exchange: string, message): void {
+    this.replyCustomMessage(ctx, `${exchange}\n${message}`);
+  }
+
+  replyCustomMessage(ctx: Context, message: string, options: any = {}): void {
     ctx.reply(message, { ...options });
   }
 

@@ -10,8 +10,10 @@ export class HelperService {
     return Users.findOne({ telegram_id: telegramId });
   }
 
-  public getArgumentFromCommand(ctx: Context & { message: { text: string } }) {
-    return ctx.message.text.replace(/\s\s+/g, ' ').split(' ')[1];
+  public getArgumentFromCommand(ctx: Context): string | null {
+    if ('text' in ctx.message)
+      return ctx.message.text.replace(/\s\s+/g, ' ').split(' ')[1];
+    return null;
   }
   public getExchangeFromCallBack(ctx: Context) {
     return ctx.callbackQuery.data?.split('-')?.at(-1)?.toUpperCase();
