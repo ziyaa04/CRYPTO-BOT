@@ -14,7 +14,7 @@ enum ExchangesEnum {
   BINANCE = 'BINANCE',
 }
 ```
- all.adapter.ts (Add ApiAdapter to the System)
+ all.adapter.ts (Add ApiAdapter to the App)
 ```typescript
 export default () =>
   [new BinanceApiAdapter(axios.create(binanceConfig))] as IApiAdapter[];
