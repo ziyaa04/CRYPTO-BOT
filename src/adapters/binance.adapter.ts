@@ -1,12 +1,12 @@
 import IApiAdapter from './types/adapter.type';
 import { Axios } from 'axios';
-import { IBinancePriceResponse } from './configs/binance.config';
+import { IBinancePriceResponse } from './types/binance.type';
 import ExchangesEnum from '../enums/exchanges.enum';
 
 export class BinanceApiAdapter implements IApiAdapter {
   name = ExchangesEnum.BINANCE;
   constructor(public readonly $api: Axios) {}
-  async getPrice(currency: string) {
+  async getPrice(currency: string): Promise<number> {
     const {
       data: { price },
     } = await this.$api.get<IBinancePriceResponse>(`api/v3/ticker/price`, {

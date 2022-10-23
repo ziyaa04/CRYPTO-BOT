@@ -1,4 +1,3 @@
-import { Context } from 'telegraf';
 import { Message } from 'typegram';
 
 declare module 'telegraf' {

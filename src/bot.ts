@@ -15,6 +15,7 @@ bot.use((ctx: Context, next) => {
       is_bot: ctx.from.is_bot,
       exchanges: [],
     });
+
     Users.save();
   }
   next();

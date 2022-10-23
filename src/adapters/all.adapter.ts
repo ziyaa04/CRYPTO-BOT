@@ -1,12 +1,15 @@
 import { BinanceApiAdapter } from './binance.adapter';
 import axios from 'axios';
-import binanceConfig from './configs/binance.config';
-import huobiConfig from './configs/huobi.config';
 import IApiAdapter from './types/adapter.type';
 import { HuobiAdapter } from './huobi.adapter';
+import { CoinMarketCapAdapter } from './coin-market-cap.adapter';
+import BinanceAxiosConfigGenerator from './configs/binance.config';
+import HuobiAxiosConfigGenerator from './configs/huobi.config';
+import CoinMarketCapAxiosConfigGenerator from './configs/coin-market-cap.config';
 
 export default () =>
   [
-    new BinanceApiAdapter(axios.create(binanceConfig)),
-    new HuobiAdapter(axios.create(huobiConfig)),
+    new BinanceApiAdapter(axios.create(BinanceAxiosConfigGenerator())),
+    new HuobiAdapter(axios.create(HuobiAxiosConfigGenerator())),
+    new CoinMarketCapAdapter(axios.create(CoinMarketCapAxiosConfigGenerator())),
   ] as IApiAdapter[];

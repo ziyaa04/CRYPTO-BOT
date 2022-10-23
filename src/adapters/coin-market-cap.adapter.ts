@@ -1,13 +1,12 @@
 import IApiAdapter from './types/adapter.type';
 import { Axios } from 'axios';
 import ExchangesEnum from '../enums/exchanges.enum';
-import { IHuobiPriceResponse } from './types/huobi.type';
 
-export class HuobiAdapter implements IApiAdapter {
+export class CoinMarketCapAdapter implements IApiAdapter {
   name = ExchangesEnum.HUOBI;
   constructor(public readonly $api: Axios) {}
   async getPrice(currency: string): Promise<number> {
-    const response = await this.$api.get<IHuobiPriceResponse>('/market/trade', {
+    const response = await this.$api.get('/market/trade', {
       params: { symbol: currency.toLowerCase() + 'usdt' },
     });
 
