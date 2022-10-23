@@ -1,8 +1,9 @@
 import { Axios } from 'axios';
+import ExchangesEnum from '../../enums/exchanges.enum';
 
 interface IApiAdapter {
   $api: Axios;
-  name: string;
+  name: ExchangesEnum;
   getPrice(currency: string): Promise<number>;
 }
 
