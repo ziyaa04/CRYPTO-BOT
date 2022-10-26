@@ -1,10 +1,13 @@
 # Crypto-bot
 ### Made with Typescript & Telegraf.js
 You can add your own Exchange's api under IApiAdapter interface
+
 ```typescript
+
 interface IApiAdapter {
     $api: Axios;
-    name: string;
+    name: ExchangesEnum;
+
     getPrice(currency: string);
 }
 ```
