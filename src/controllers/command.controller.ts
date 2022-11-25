@@ -1,4 +1,5 @@
 import { Context } from 'telegraf';
+
 import CommandService from '../services/command.service';
 
 class CommandController {

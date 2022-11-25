@@ -1,4 +1,5 @@
 import { Axios } from 'axios';
+
 import ExchangesEnum from '../../enums/exchanges.enum';
 
 interface IApiAdapter {

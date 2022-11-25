@@ -1,4 +1,5 @@
 import { Logger } from 'tslog';
+
 import MessageService from './services/message.service';
 import CommandService from './services/command.service';
 import apiAdaptersGenerator from './adapters/all.adapter';

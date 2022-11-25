@@ -1,4 +1,5 @@
 import { Context, Telegraf } from 'telegraf';
+
 import { Users } from './db/tables.db';
 import { commandController, actionController } from './singletons';
 const bot = new Telegraf(process.env.TOKEN);
@@ -18,6 +19,7 @@ bot.use((ctx: Context, next) => {
 
     Users.save();
   }
+
   next();
 });
 

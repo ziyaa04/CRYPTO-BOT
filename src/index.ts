@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 config({
   path: process.env.NODE_ENV,
 });
+
 import bot from './bot';
 
 // start application

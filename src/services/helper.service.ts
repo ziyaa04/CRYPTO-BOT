@@ -1,7 +1,8 @@
+import { Context } from 'telegraf';
+
 import { IUser } from '../db/types/user.db.types';
 import { IDbTableDataType } from '../db/types/table.db.types';
 import { Users } from '../db/tables.db';
-import { Context } from 'telegraf';
 import MessageService from './message.service';
 
 export class HelperService {

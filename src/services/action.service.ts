@@ -1,9 +1,10 @@
 import { Context } from 'telegraf';
+import { Logger } from 'tslog';
+
 import ExchangesEnum from '../enums/exchanges.enum';
 import { IUser } from '../db/types/user.db.types';
 import { Users } from '../db/tables.db';
 import MessageService from './message.service';
-import { Logger } from 'tslog';
 import IApiAdapter from '../adapters/types/adapter.type';
 import { HelperService } from './helper.service';
 

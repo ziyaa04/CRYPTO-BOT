@@ -1,5 +1,6 @@
-import IApiAdapter from './types/adapter.type';
 import { Axios } from 'axios';
+
+import IApiAdapter from './types/adapter.type';
 import ExchangesEnum from '../enums/exchanges.enum';
 import { IHuobiPriceResponse } from './types/huobi.type';
 

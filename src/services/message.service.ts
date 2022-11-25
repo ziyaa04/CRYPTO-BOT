@@ -1,5 +1,6 @@
-import ExchangesEnum from '../enums/exchanges.enum';
 import { Context, Markup } from 'telegraf';
+
+import ExchangesEnum from '../enums/exchanges.enum';
 import MessagesEnum from '../enums/messages.enum';
 
 export class MessageService {

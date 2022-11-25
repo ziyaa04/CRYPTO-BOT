@@ -1,6 +1,7 @@
 import * as fs from 'fs';
-import { IDbTable, IDbTableDataType } from './types/table.db.types';
 import * as path from 'path';
+
+import { IDbTable, IDbTableDataType } from './types/table.db.types';
 
 export class DbTable<TSchema extends object, TUpdateSchema extends object>
   implements IDbTable<TSchema, TUpdateSchema>
@@ -45,12 +46,15 @@ export class DbTable<TSchema extends object, TUpdateSchema extends object>
     });
     return selectedElem ?? null;
   }
+
   toJson(data: object) {
     return JSON.stringify(data);
   }
+
   toJS(jsonString: string) {
     return JSON.parse(jsonString);
   }
+
   find(
     props: TUpdateSchema | TSchema | IDbTableDataType,
   ): (TSchema & IDbTableDataType)[] {
@@ -60,6 +64,7 @@ export class DbTable<TSchema extends object, TUpdateSchema extends object>
     }
     return res;
   }
+
   findOne(
     props: TUpdateSchema | TSchema | IDbTableDataType,
   ): (TSchema & IDbTableDataType) | null {
@@ -68,6 +73,7 @@ export class DbTable<TSchema extends object, TUpdateSchema extends object>
     }
     return null;
   }
+
   findOneById(_id: number): (TSchema & IDbTableDataType) | null {
     return this.findOne({ _id });
   }
