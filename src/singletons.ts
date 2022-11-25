@@ -16,12 +16,7 @@ const messageService = new MessageService();
 const helperService = new HelperService(messageService);
 
 // services
-const actionService = new ActionService(
-  messageService,
-  logger,
-  apiAdapters,
-  helperService,
-);
+const actionService = new ActionService(messageService, logger, helperService);
 
 const commandService = new CommandService(
   messageService,

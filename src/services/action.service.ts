@@ -5,14 +5,12 @@ import ExchangesEnum from '../enums/exchanges.enum';
 import { IUser } from '../db/types/user.db.types';
 import { Users } from '../db/tables.db';
 import MessageService from './message.service';
-import IApiAdapter from '../adapters/types/adapter.type';
 import { HelperService } from './helper.service';
 
 export class ActionService {
   constructor(
     private readonly messageService: MessageService,
     private readonly logger: Logger,
-    public readonly container: IApiAdapter[],
     private readonly helperService: HelperService,
   ) {}
   async setExchange(ctx: Context) {
