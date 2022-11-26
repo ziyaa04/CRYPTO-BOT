@@ -5,14 +5,12 @@ import ExchangesEnum from '../enums/exchanges.enum';
 import { IUser } from '../db/types/user.db.types';
 import { Users } from '../db/tables.db';
 import MessageService from './message.service';
-import IApiAdapter from '../adapters/types/adapter.type';
 import { HelperService } from './helper.service';
 
 export class ActionService {
   constructor(
     private readonly messageService: MessageService,
     private readonly logger: Logger,
-    public readonly container: IApiAdapter[],
     private readonly helperService: HelperService,
   ) {}
 
@@ -23,6 +21,7 @@ export class ActionService {
         ctx,
       ) as ExchangesEnum;
       if (!selectedExchange) throw new Error();
+
       const user: IUser = await this.helperService.findUser(
         ctx.callbackQuery.from.id,
       );
@@ -38,6 +37,7 @@ export class ActionService {
       // add exchange to the user's exchanges
       user.exchanges.push(selectedExchange);
       Users.save();
+
       this.messageService.replySelectedExchange(ctx, selectedExchange);
     } catch (e) {
       this.logger.error(e);
