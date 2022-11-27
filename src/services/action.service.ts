@@ -5,16 +5,15 @@ import ExchangesEnum from '../enums/exchanges.enum';
 import { IUser } from '../db/types/user.db.types';
 import { Users } from '../db/tables.db';
 import MessageService from './message.service';
-import IApiAdapter from '../adapters/types/adapter.type';
 import { HelperService } from './helper.service';
 
 export class ActionService {
   constructor(
     private readonly messageService: MessageService,
     private readonly logger: Logger,
-    public readonly container: IApiAdapter[],
     private readonly helperService: HelperService,
   ) {}
+
   async setExchange(ctx: Context) {
     try {
       this.logger.info(ctx.from.username);
@@ -22,9 +21,11 @@ export class ActionService {
         ctx,
       ) as ExchangesEnum;
       if (!selectedExchange) throw new Error();
+
       const user: IUser = await this.helperService.findUser(
         ctx.callbackQuery.from.id,
       );
+
       // check is already selected the exchange
       if (
         user.exchanges.find((elem) => elem.toUpperCase() === selectedExchange)
@@ -43,6 +44,7 @@ export class ActionService {
       this.messageService.replyError(ctx);
     }
   }
+
   async removeExchange(ctx: Context) {
     try {
       this.logger.info(ctx.from.username);

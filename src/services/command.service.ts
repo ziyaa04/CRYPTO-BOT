@@ -16,6 +16,7 @@ class CommandService {
     public readonly container: IApiAdapter[],
     private readonly helperService: HelperService,
   ) {}
+
   async start(ctx: Context) {
     this.logger.info(ctx.from.username);
     ctx.reply('Welcome!');
