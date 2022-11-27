@@ -1,4 +1,5 @@
 export const HelperServiceMockGenerator = () => ({
-  setExchange: jest.fn(),
-  removeExchange: jest.fn(),
+  findUser: jest.fn(),
+  getArgumentFromCommand: jest.fn(),
+  getExchangeFromCallBack: jest.fn(),
 });

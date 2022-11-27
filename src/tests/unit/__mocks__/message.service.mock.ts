@@ -9,4 +9,7 @@ export const MessageServiceMockGenerator = () => ({
   replyNotSelectedCurrency: jest.fn(),
   replyExchangeMessage: jest.fn(),
   replyCustomMessage: jest.fn(),
+  makeButtons: jest.fn(),
+  getAllExchanges: jest.fn(),
+  getMyExchanges: jest.fn(),
 });

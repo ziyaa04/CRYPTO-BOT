@@ -25,6 +25,7 @@ export class ActionService {
       const user: IUser = await this.helperService.findUser(
         ctx.callbackQuery.from.id,
       );
+
       // check is already selected the exchange
       if (
         user.exchanges.find((elem) => elem.toUpperCase() === selectedExchange)
@@ -37,7 +38,6 @@ export class ActionService {
       // add exchange to the user's exchanges
       user.exchanges.push(selectedExchange);
       Users.save();
-
       this.messageService.replySelectedExchange(ctx, selectedExchange);
     } catch (e) {
       this.logger.error(e);
