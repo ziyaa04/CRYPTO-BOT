@@ -18,7 +18,7 @@ class CommandService {
   ) {}
   async start(ctx: Context) {
     this.logger.info(ctx.from.username);
-    ctx.reply('Welcome!');
+    this.messageService.replyCustomMessage(ctx, 'Welcome !');
   }
   async getPrice(ctx: Context) {
     try {
