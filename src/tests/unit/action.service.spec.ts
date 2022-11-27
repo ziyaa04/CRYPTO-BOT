@@ -6,6 +6,7 @@ import { MessageServiceMockGenerator } from './__mocks__/message.service.mock';
 import { HelperServiceMockGenerator } from './__mocks__/helper.service.mock';
 import ExchangesEnum from '../../enums/exchanges.enum';
 import { IUser } from '../../db/types/user.db.types';
+import { Users } from '../../db/tables.db';
 
 describe('ActionService', () => {
   let sut: ActionService;
@@ -26,6 +27,7 @@ describe('ActionService', () => {
       logger,
       helperService,
     );
+    jest.spyOn(Users, 'save').mockImplementation(async () => {});
   });
 
   describe('#setExchange', () => {
