@@ -44,6 +44,7 @@ export class ActionService {
       this.messageService.replyError(ctx);
     }
   }
+
   async removeExchange(ctx: Context) {
     try {
       this.logger.info(ctx.from.username);
