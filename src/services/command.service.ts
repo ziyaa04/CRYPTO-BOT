@@ -73,7 +73,7 @@ class CommandService {
       if (!validationResult) return null;
       const { user, currency } = validationResult;
       // reply selected adapters price
-      this.replySelectedAdaptersMinPrice(ctx, user, currency);
+      await this.replySelectedAdaptersMinPrice(ctx, user, currency);
     } catch (e) {
       this.logger.error(e);
       // db error or another unexpected one
