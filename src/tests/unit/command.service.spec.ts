@@ -328,4 +328,22 @@ describe('CommandService', () => {
       });
     });
   });
+
+  describe('#exchanges', () => {
+    let ctx: Context;
+    beforeEach(() => {
+      ctx = {
+        get from() {
+          return { username: 'test-username' };
+        },
+      } as Context;
+    });
+
+    describe('success', () => {
+      it('should send all exchanges', () => {
+        sut.exchanges(ctx);
+        expect(messageService.replyAllExchanges).toHaveBeenCalledWith(ctx);
+      });
+    });
+  });
 });
