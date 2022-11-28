@@ -1,9 +1,10 @@
+import { Context } from 'telegraf';
+
 import CommandService from '../../services/command.service';
 import { MessageServiceMockGenerator } from './__mocks__/message.service.mock';
 import { HelperServiceMockGenerator } from './__mocks__/helper.service.mock';
 import { LoggerServiceMockGenerator } from './__mocks__/logger.service.mock';
 import { AdapterMockGenerator } from './__mocks__/adapter.mock';
-import { Context } from 'telegraf';
 import { IUser } from '../../db/types/user.db.types';
 import MessagesEnum from '../../enums/messages.enum';
 
