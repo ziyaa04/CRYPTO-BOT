@@ -90,7 +90,7 @@ describe('CommandService', () => {
         };
       });
 
-      it('should return price of currency from selected exchange adapter', async () => {
+      it('should send price of currency from selected exchange adapter', async () => {
         helperService.findUser.mockResolvedValueOnce(user);
         helperService.getArgumentFromCommand.mockReturnValueOnce(currency);
         testAdapter.getPrice.mockResolvedValueOnce(price);
@@ -119,7 +119,7 @@ describe('CommandService', () => {
         };
       });
 
-      it('should return not-selected-exchange message', async () => {
+      it('should send not-selected-exchange message', async () => {
         helperService.findUser.mockResolvedValueOnce(user);
 
         await sut.getPrice(ctx);
@@ -127,7 +127,7 @@ describe('CommandService', () => {
           ctx,
         );
       });
-      it('should return not-selected-currency message', async () => {
+      it('should send not-selected-currency message', async () => {
         user.exchanges.push(testAdapter.name);
         helperService.findUser.mockResolvedValueOnce(user);
         helperService.getArgumentFromCommand.mockReturnValueOnce(null);
@@ -137,7 +137,7 @@ describe('CommandService', () => {
           ctx,
         );
       });
-      it('should return not-exists-currency-in-exchange message', async () => {
+      it('should send not-exists-currency-in-exchange message', async () => {
         user.exchanges.push(testAdapter.name);
         helperService.findUser.mockResolvedValueOnce(user);
         helperService.getArgumentFromCommand.mockReturnValueOnce(
@@ -188,7 +188,7 @@ describe('CommandService', () => {
         };
       });
 
-      it('should return selected exchanges', async () => {
+      it('should send selected exchanges', async () => {
         helperService.findUser.mockResolvedValueOnce(user);
         await sut.myExchanges(ctx);
         expect(messageService.replySelectedExchanges).toHaveBeenCalledWith(
@@ -199,7 +199,7 @@ describe('CommandService', () => {
     });
 
     describe('error', () => {
-      it('should return unexpected-error', async () => {
+      it('should send unexpected-error', async () => {
         helperService.findUser.mockImplementation(async () => {
           throw new Error();
         });
