@@ -156,4 +156,57 @@ describe('CommandService', () => {
       });
     });
   });
+
+  describe('#myExchanges', () => {
+    let ctx: Context;
+    beforeEach(() => {
+      ctx = {
+        get from() {
+          return { username: 'test-username' };
+        },
+        get message() {
+          return {
+            get from() {
+              return { id: 1 };
+            },
+          };
+        },
+      } as Context;
+    });
+
+    describe('success', () => {
+      let user: IUser;
+      beforeEach(() => {
+        user = {
+          telegram_id: 12,
+          user_name: 'test-user-name',
+          user_lastname: 'test-user-last-name',
+          telegram_name: 'test-tel-name',
+          telegram_lang: 'en',
+          is_bot: false,
+          exchanges: [testAdapter.name],
+        };
+      });
+
+      it('should return selected exchanges', async () => {
+        helperService.findUser.mockResolvedValueOnce(user);
+        await sut.myExchanges(ctx);
+        expect(messageService.replySelectedExchanges).toHaveBeenCalledWith(
+          ctx,
+          user.exchanges,
+        );
+      });
+    });
+
+    describe('error', () => {
+      it('should return unexpected-error', async () => {
+        helperService.findUser.mockImplementation(async () => {
+          throw new Error();
+        });
+
+        await sut.myExchanges(ctx);
+        expect(messageService.replyError).toHaveBeenCalledWith(ctx);
+      });
+    });
+  });
 });
