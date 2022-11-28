@@ -19,7 +19,7 @@ class CommandService {
 
   async start(ctx: Context) {
     this.logger.info(ctx.from.username);
-    this.messageService.replyCustomMessage(ctx, 'Welcome!');
+    this.messageService.replyCustomMessage(ctx, 'Welcome !');
   }
 
   async getPrice(ctx: Context) {
@@ -29,7 +29,7 @@ class CommandService {
       if (!validationResult) return null;
       const { user, currency } = validationResult;
 
-      this.replySelectedAdaptersPrice(ctx, user, currency);
+      await this.replySelectedAdaptersPrice(ctx, user, currency);
     } catch (e) {
       this.logger.error(e);
       // db error or another unexpected one
