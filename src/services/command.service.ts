@@ -19,25 +19,24 @@ class CommandService {
 
   async start(ctx: Context) {
     this.logger.info(ctx.from.username);
-    ctx.reply('Welcome!');
+    this.messageService.replyCustomMessage(ctx, 'Welcome !');
   }
+
   async getPrice(ctx: Context) {
     try {
       this.logger.info(ctx.from.username);
       const validationResult = await this.validateUserAndCurrency(ctx);
       if (!validationResult) return null;
       const { user, currency } = validationResult;
-      this.replySelectedAdaptersPrice(ctx, user, currency);
+
+      await this.replySelectedAdaptersPrice(ctx, user, currency);
     } catch (e) {
       this.logger.error(e);
       // db error or another unexpected one
       return this.messageService.replyError(ctx);
     }
   }
-  exchanges(ctx: Context) {
-    this.logger.info(ctx.from.username);
-    this.messageService.replyAllExchanges(ctx);
-  }
+
   async myExchanges(ctx: Context) {
     try {
       this.logger.info(ctx.from.username);
@@ -51,6 +50,42 @@ class CommandService {
       this.messageService.replyError(ctx);
     }
   }
+
+  async maxPrice(ctx: Context) {
+    try {
+      this.logger.info(ctx.from.username);
+      const validationResult = await this.validateUserAndCurrency(ctx);
+      if (!validationResult) return null;
+      const { user, currency } = validationResult;
+      // reply selected adapters price
+      await this.replySelectedAdaptersMaxPrice(ctx, user, currency);
+    } catch (e) {
+      this.logger.error(e);
+      // db error or another unexpected one
+      return this.messageService.replyError(ctx);
+    }
+  }
+
+  async minPrice(ctx: Context) {
+    try {
+      this.logger.info(ctx.from.username);
+      const validationResult = await this.validateUserAndCurrency(ctx);
+      if (!validationResult) return null;
+      const { user, currency } = validationResult;
+      // reply selected adapters price
+      await this.replySelectedAdaptersMinPrice(ctx, user, currency);
+    } catch (e) {
+      this.logger.error(e);
+      // db error or another unexpected one
+      return this.messageService.replyError(ctx);
+    }
+  }
+
+  exchanges(ctx: Context) {
+    this.logger.info(ctx.from.username);
+    this.messageService.replyAllExchanges(ctx);
+  }
+
   private async validateUserAndCurrency(ctx: Context) {
     const user = await this.helperService.findUser(ctx.message.from.id);
     // if not selected exchanges reply message
@@ -60,34 +95,6 @@ class CommandService {
     // if not exists currency reply message
     if (!currency) return this.messageService.replyNotSelectedCurrency(ctx);
     return { user, currency };
-  }
-  async maxPrice(ctx: Context) {
-    try {
-      this.logger.info(ctx.from.username);
-      const validationResult = await this.validateUserAndCurrency(ctx);
-      if (!validationResult) return null;
-      const { user, currency } = validationResult;
-      // reply selected adapters price
-      this.replySelectedAdaptersMaxPrice(ctx, user, currency);
-    } catch (e) {
-      this.logger.error(e);
-      // db error or another unexpected one
-      return this.messageService.replyError(ctx);
-    }
-  }
-  async minPrice(ctx: Context) {
-    try {
-      this.logger.info(ctx.from.username);
-      const validationResult = await this.validateUserAndCurrency(ctx);
-      if (!validationResult) return null;
-      const { user, currency } = validationResult;
-      // reply selected adapters price
-      this.replySelectedAdaptersMinPrice(ctx, user, currency);
-    } catch (e) {
-      this.logger.error(e);
-      // db error or another unexpected one
-      return this.messageService.replyError(ctx);
-    }
   }
 
   private async replySelectedAdaptersMaxPrice(
@@ -170,6 +177,7 @@ class CommandService {
     }
     return apiPriceResults;
   }
+
   private isExistsAdapter(user: IUser, adapter: IApiAdapter) {
     return user.exchanges.find(
       (name) => name.toUpperCase() === adapter.name.toUpperCase(),
