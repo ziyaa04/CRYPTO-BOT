@@ -1,9 +1,14 @@
 # Crypto-bot
 ### Made with Typescript & Telegraf.js
-You can add your own Exchange's api under IApiAdapter interface
 
+Before making ApiAdapter you  must  add your Exchange's name to the ExchangesEnum
 ```typescript
-
+enum ExchangesEnum {
+  BINANCE = 'BINANCE',
+}
+```
+After that you can add your own Exchange's api under IApiAdapter interface
+```typescript
 interface IApiAdapter {
     $api: Axios;
     name: ExchangesEnum;
@@ -11,12 +16,7 @@ interface IApiAdapter {
     getPrice(currency: string);
 }
 ```
-Before making ApiAdapter you  must  add your Exchange's name to the ExchangesEnum
-```typescript
-enum ExchangesEnum {
-  BINANCE = 'BINANCE',
-}
-```
+
  all.adapter.ts (Add ApiAdapter to the App)
 ```typescript
 export default () =>
