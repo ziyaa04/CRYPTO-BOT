@@ -1,5 +1,6 @@
 import { HelperService } from '../../services/helper.service';
 import { Users } from '../../db/tables.db';
+import { Context } from 'telegraf';
 
 describe('HelperService', () => {
   let sut: HelperService;
@@ -38,7 +39,37 @@ describe('HelperService', () => {
     });
   });
 
-  describe('#getArgumentFromCommand', () => {});
+  describe('#getArgumentFromCommand', () => {
+    let ctx: Context;
+    let argument: string;
+    beforeEach(() => {
+      argument = 'argument';
+      ctx = {
+        get message() {
+          return {
+            text: `/command ${argument}`,
+          };
+        },
+      } as Context;
+    });
+
+    describe('success', () => {
+      it('should return argument in the command text', () => {
+        expect(sut.getArgumentFromCommand(ctx)).toBe(argument);
+      });
+    });
+
+    describe('error', () => {
+      it('should return null', () => {
+        ctx = {
+          get message() {
+            return {};
+          },
+        } as Context;
+        expect(sut.getArgumentFromCommand(ctx)).toBe(null);
+      });
+    });
+  });
 
   describe('#getExchangeFromCallBack', () => {});
 });
