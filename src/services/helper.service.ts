@@ -5,7 +5,7 @@ import { IDbTableDataType } from '../db/types/table.db.types';
 import { Users } from '../db/tables.db';
 
 export class HelperService {
-  public findUser(telegramId: number): IUser & IDbTableDataType {
+  public findUser(telegramId: number): (IUser & IDbTableDataType) | null {
     return Users.findOne({ telegram_id: telegramId });
   }
 
