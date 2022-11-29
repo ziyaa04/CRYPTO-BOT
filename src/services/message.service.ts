@@ -12,6 +12,7 @@ export class MessageService {
       parse_mode: 'MarkdownV2',
     });
   }
+
   replySelectedExchanges(ctx: Context, exchanges: ExchangesEnum[]) {
     ctx.reply(MessagesEnum.MyExchanges, {
       reply_markup: {
@@ -28,6 +29,7 @@ export class MessageService {
   replySelectedExchange(ctx: Context, exchange: ExchangesEnum) {
     this.replyCustomMessage(ctx, `${exchange} successfully selected!`);
   }
+
   replyRemovedExchange(ctx: Context, exchange: ExchangesEnum) {
     this.replyCustomMessage(ctx, `${exchange} successfully removed!`);
   }
@@ -74,6 +76,7 @@ export class MessageService {
   private getAllExchanges() {
     return this.makeButtons(ExchangesEnum, MessagesEnum.ExchangeSetSchema);
   }
+
   private getMyExchanges(exchanges: ExchangesEnum[]) {
     return this.makeButtons(exchanges, MessagesEnum.ExchangeRemoveSchema);
   }

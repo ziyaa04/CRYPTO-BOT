@@ -5,7 +5,7 @@ import { IDbTableDataType } from '../db/types/table.db.types';
 import { Users } from '../db/tables.db';
 
 export class HelperService {
-  public findUser(telegramId: number): IUser & IDbTableDataType {
+  public findUser(telegramId: number): (IUser & IDbTableDataType) | null {
     return Users.findOne({ telegram_id: telegramId });
   }
 
@@ -14,6 +14,7 @@ export class HelperService {
       return ctx.message.text.replace(/\s\s+/g, ' ').split(' ')[1];
     return null;
   }
+
   public getExchangeFromCallBack(ctx: Context) {
     return ctx.callbackQuery.data?.split('-')?.at(-1)?.toUpperCase();
   }
