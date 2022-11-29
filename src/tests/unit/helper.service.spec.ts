@@ -71,5 +71,23 @@ describe('HelperService', () => {
     });
   });
 
-  describe('#getExchangeFromCallBack', () => {});
+  describe('#getExchangeFromCallBack', () => {
+    let ctx: Context;
+    let argument: string;
+
+    beforeEach(() => {
+      argument = 'BINANCE';
+      ctx = {
+        get callbackQuery() {
+          return { data: `/exchange-set-${argument}` };
+        },
+      } as Context;
+    });
+
+    describe('success', () => {
+      it('should return argument in callback', () => {
+        expect(sut.getExchangeFromCallBack(ctx)).toBe(argument);
+      });
+    });
+  });
 });
