@@ -11,7 +11,7 @@ interface IApiAdapter {
     getPrice(currency: string);
 }
 ```
-After making ApiAdapter you  must  add your Exchange's name to the ExchangesEnum
+Before making ApiAdapter you  must  add your Exchange's name to the ExchangesEnum
 ```typescript
 enum ExchangesEnum {
   BINANCE = 'BINANCE',
