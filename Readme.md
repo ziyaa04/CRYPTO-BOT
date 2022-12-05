@@ -19,7 +19,7 @@ interface IApiAdapter {
 
  all.adapter.ts (Add ApiAdapter to the App)
 ```typescript
-export default () =>
-  [new BinanceApiAdapter(axios.create(binanceConfig))] as IApiAdapter[];
+export default (): IApiAdapter[] =>
+  [new BinanceApiAdapter(axios.create(binanceConfig))];
 ```
 You can also  make your ApiAdapter's config in /src/adapters/config folder.
