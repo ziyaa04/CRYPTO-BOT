@@ -1,5 +1,6 @@
-import { BinanceApiAdapter } from './binance.adapter';
 import axios from 'axios';
+
+import { BinanceApiAdapter } from './binance.adapter';
 import IApiAdapter from './types/adapter.type';
 import { HuobiAdapter } from './huobi.adapter';
 import { CoinMarketCapAdapter } from './coin-market-cap.adapter';
